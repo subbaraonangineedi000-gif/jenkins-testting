@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# But not these files:
+!Jenkinsfile
+!hello.py
+!README
+!README.md
+
+# Ignore directories explicitly (if needed)
+!.gitignore
+!*/
