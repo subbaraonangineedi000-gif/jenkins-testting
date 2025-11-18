@@ -1,22 +1,21 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.14.0-alpine3.22'
-            args '-u root:root' // Optional: run as root if needed
-            registryCredentialsId 'dockerhub_id' // Add this line for Docker Hub credentials
-        }
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')   // your Jenkins Docker Hub creds ID
+        IMAGE_NAME = 'subbu4540/hello-app:test'               // your Docker Hub image
     }
+
     stages {
-        stage('Build') {
+        stage('Use Docker Image') {
             steps {
-                echo 'Building in Python container...'
-                sh 'python --version'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Running Python script...'
-                sh 'python hello.py'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
+                        docker.image(IMAGE_NAME).inside {
+                            sh 'python hello.py'          // run command inside container
+                        }
+                    }
+                }
             }
         }
     }
